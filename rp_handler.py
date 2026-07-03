@@ -91,7 +91,7 @@ def http_post_multipart(url, file_bytes, filename, timeout=120):
 # ============================================================
 # COMFYUI HEALTH
 # ============================================================
-def wait_comfy_ready(max_wait=180):
+def wait_comfy_ready(max_wait=110):
     """Espera a que ComfyUI responda /system_stats (incluye carga de modelos)."""
     log.info(f"Esperando ComfyUI en {COMFY_URL} (max {max_wait}s)...")
     t0 = time.time()
@@ -104,9 +104,23 @@ def wait_comfy_ready(max_wait=180):
             return True
         except Exception as e:
             last_err = e
-            log.debug(f"ComfyUI no listo aún ({e})")
+            elapsed = int(time.time() - t0)
+            # Mostrar progreso cada 15s con el último log de ComfyUI si está disponible
+            if elapsed % 15 == 0 and elapsed > 0:
+                log.info(f"  ...{elapsed}s esperando ComfyUI. Last: {str(last_err)[:100]}")
+                # Intentar leer log de ComfyUI para diagnosticar
+                try:
+                    if os.path.isfile("/tmp/comfyui.log"):
+                        with open("/tmp/comfyui.log", "r", errors="ignore") as f:
+                            tail = f.readlines()[-3:]
+                            for line in tail:
+                                log.info(f"    [comfyui] {line.rstrip()[:200]}")
+                except Exception:
+                    pass
             time.sleep(2)
-    raise RuntimeError(f"ComfyUI no arrancó en {max_wait}s. Last error: {last_err}")
+    raise RuntimeError(f"ComfyUI no arrancó en {max_wait}s. Last error: {last_err}. "
+                       f"Probable: el Execution Timeout del endpoint es < {max_wait}s. "
+                       f"Subilo a 600s en RunPod Console → endpoint → Configuration.")
 
 
 # ============================================================
