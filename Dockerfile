@@ -54,4 +54,8 @@ WORKDIR /workspace
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
   CMD curl --fail http://localhost:8188/system_stats || exit 1
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+COPY start-runpod.sh /workspace/
+RUN chmod +x /workspace/start-runpod.sh
+
+ENTRYPOINT ["/workspace/start-runpod.sh"]
+CMD ["runpod-worker-comfy"]
