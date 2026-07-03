@@ -41,8 +41,10 @@ WORKDIR /workspace
 RUN chmod -R 755 /workspace/ComfyUI
 RUN chmod -R 755 /workspace/ComfyUI/custom_nodes/ComfyUI-CatVTON
 
-# Copy the client script into the container
+# Copy client + custom RunPod handler (Umbral v3)
 COPY test.py /workspace/
+COPY rp_handler.py /workspace/
+RUN chmod +x /workspace/rp_handler.py
 
 # Create a directory for test images
 RUN mkdir -p /workspace/test_images
@@ -50,12 +52,14 @@ RUN mkdir -p /workspace/test_images
 # Return to workspace directory
 WORKDIR /workspace
 
-# Add healthcheck
-HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
-  CMD curl --fail http://localhost:8188/system_stats || exit 1
+# Add healthcheck (comfy + handler /health)
+HEALTHCHECK --interval=30s --timeout=30s --start-period=120s --retries=5 \
+    CMD curl --fail http://localhost:8188/system_stats || exit 1
 
 COPY start-runpod.sh /workspace/
 RUN chmod +x /workspace/start-runpod.sh
 
+# Umbral v3: usamos el rp_handler.py custom como handler de RunPod.
+# start-runpod.sh arranca ComfyUI + luego exec el handler.
 ENTRYPOINT ["/workspace/start-runpod.sh"]
-CMD ["runpod-worker-comfy"]
+CMD ["python", "/workspace/rp_handler.py"]
