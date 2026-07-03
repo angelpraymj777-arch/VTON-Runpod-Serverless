@@ -54,4 +54,4 @@ WORKDIR /workspace
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3 \
   CMD curl --fail http://localhost:8188/system_stats || exit 1
 
-# Do not override the ENTRYPOINT from the base image
+ENTRYPOINT ["/docker-entrypoint.sh"]
