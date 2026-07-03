@@ -91,7 +91,7 @@ def http_post_multipart(url, file_bytes, filename, timeout=120):
 # ============================================================
 # COMFYUI HEALTH
 # ============================================================
-def wait_comfy_ready(max_wait=110):
+def wait_comfy_ready(max_wait=85):
     """Espera a que ComfyUI responda /system_stats (incluye carga de modelos)."""
     log.info(f"Esperando ComfyUI en {COMFY_URL} (max {max_wait}s)...")
     t0 = time.time()
@@ -284,7 +284,7 @@ def handler(event):
 
     # ------------------ 2. Esperar ComfyUI ------------------
     try:
-        wait_comfy_ready(max_wait=120)
+        wait_comfy_ready(max_wait=85)
     except Exception as e:
         log.exception("ComfyUI no responde")
         return {"error": f"ComfyUI no responde: {e}", "elapsed_sec": round(time.time() - t0, 1)}
