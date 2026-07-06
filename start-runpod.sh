@@ -32,8 +32,9 @@ export HF_HUB_DISABLE_TELEMETRY=1
 if [ ! -d "${CUSTOM_NODES_DIR}/ComfyUI-CatVTON" ]; then
   echo "[start] Instalando nodo ComfyUI-CatVTON (una sola vez)..."
   cd "$CUSTOM_NODES_DIR"
-  wget -q https://github.com/Zheng-Chong/CatVTON/releases/download/ComfyUI/ComfyUI-CatVTON.zip
-  unzip -q ComfyUI-CatVTON.zip && rm ComfyUI-CatVTON.zip
+ wget -q https://github.com/Zheng-Chong/CatVTON/releases/download/ComfyUI/ComfyUI-CatVTON.zip
+python3 -c "import zipfile; zipfile.ZipFile('ComfyUI-CatVTON.zip').extractall('.')"
+rm ComfyUI-CatVTON.zip
   [ -f "${CUSTOM_NODES_DIR}/ComfyUI-CatVTON/requirements.txt" ] && \
     pip install --no-cache-dir -r "${CUSTOM_NODES_DIR}/ComfyUI-CatVTON/requirements.txt" || true
 fi
