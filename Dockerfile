@@ -34,4 +34,5 @@ WORKDIR /workspace
 # El start-runpod.sh orquesta ComfyUI en background, y el CMD final es
 # runpod-worker-comfy que importa rp_handler.py automáticamente.
 ENTRYPOINT ["/workspace/start-runpod.sh"]
-CMD ["runpod-worker-comfy"]
+CMD ["python3", "-u", "/workspace/rp_handler.py"]
+
