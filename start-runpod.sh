@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 set -uo pipefail   # NO usamos -e: queremos que el handler arranque aunque ComfyUI tarde
 
-COMFY_DIR="/workspace/ComfyUI"
+COMFY_DIR="/comfyui"
 COMFY_URL="http://127.0.0.1:8188"
 COMFY_HEALTH_URL="${COMFY_URL}/system_stats"
 COMFY_LOG="/tmp/comfyui.log"
