@@ -52,16 +52,17 @@ MODEL_DIR="${COMFY_DIR}/models/checkpoints"
 INPAINT_MODEL="${MODEL_DIR}/sd-v1-5-inpainting.ckpt"
 mkdir -p "$MODEL_DIR"
 if [ ! -f "$INPAINT_MODEL" ]; then
-  echo "[start] SD inpainting NO está bakeado, bajando ahora (raro, debería estarlo)..."
-  huggingface-cli download runwayml/stable-diffusion-inpainting \
+  echo "[start] SD inpainting NO está bakeado, bajando ahora (raro, deberia estarlo)..."
+  if huggingface-cli download ashllay/stable-diffusion-v1-5-inpainting-archive \
     --include "sd-v1-5-inpainting.ckpt" \
     --cache-dir /root/.cache/huggingface \
-    --local-dir /tmp/sd-inpaint-dl || {
-      echo "[start] ERROR: no pude bajar SD inpainting"
-      exit 0   # seguir igual, el job va a fallar pero el handler arranca
-    }
-  cp /tmp/sd-inpaint-dl/sd-v1-5-inpainting.ckpt "$INPAINT_MODEL"
-  rm -rf /tmp/sd-inpaint-dl
+    --local-dir /tmp/sd-inpaint-dl; then
+      cp /tmp/sd-inpaint-dl/sd-v1-5-inpainting.ckpt "$INPAINT_MODEL"
+      rm -rf /tmp/sd-inpaint-dl
+      echo "[start] SD Inpainting descargado con éxito ✓"
+  else
+      echo "[start] ERROR: no pude bajar SD inpainting. Se intentará continuar sin él."
+  fi
 else
   echo "[start] SD inpainting ya bakeado ✓ ($(du -h "$INPAINT_MODEL" | cut -f1))"
 fi
